@@ -5,16 +5,16 @@ namespace JornadaMilhas.Test;
 public class OfertaViagemConstrutor
 {
     #region Classe OfertaViagem
-    [Fact]
-    public void RetornaOfertaValidaQuandoDadosValidos()
+    [Theory] // permite trabalar com vários cenários diferentes dentro de um mesmo teste
+    [InlineData("", null, "2024-01-01", "2024-01-02", 0, false)] //podem trazer ofertas inválidas
+    [InlineData("OrigemTeste", "DestinoTeste", "2024-02-01", "2024-02-05", 100, true)] //tras a oferta válida
+    public void RetornaEhValidoDeAcordoComDadosDeEntrada(string origem, string destino, string dataIda, string dataVolta, double preco, bool validacao)
     {
         //// Cenário
 
         //itens do teste para construir a OfertaViagem
-        Rota rota = new Rota("OrigemTeste", "DestinoTeste");
-        Periodo periodo = new Periodo(new DateTime(2024, 2, 1), new DateTime(2024, 2, 5));
-        double preco = 100.0;
-        var validacao = true;
+        Rota rota = new Rota(origem, destino);
+        Periodo periodo = new Periodo(DateTime.Parse(dataIda), DateTime.Parse(dataVolta));
 
         //// Ação
 
@@ -43,13 +43,13 @@ public class OfertaViagemConstrutor
         Assert.False(oferta.EhValido); //Assert.False verifica se o valor é falso
     }
 
-    [Fact]
-    public void RetornaMensagemDeErroDePrecoInvalidoQuandoPrecoMenorQueZero()
+    [Theory]
+    [InlineData("Origem1", "Destino1", "2024-08-20", "2024-08-30", -250)]
+    public void RetornaMensagemDeErroDePrecoInvalidoQuandoPrecoMenorQueZero(string origem1, string destino1, string dataIda, string dataVolta, double preco)
     {
         //arrange
-        Rota rota = new Rota("Origem1", "Destino1");
-        Periodo periodo = new Periodo(new DateTime(2024, 8, 20), new DateTime(2024, 8, 30));
-        double preco = -250;
+        Rota rota = new Rota(origem1, destino1);
+        Periodo periodo = new Periodo(DateTime.Parse(dataIda), DateTime.Parse(dataVolta));       
 
         //act
         OfertaViagem oferta = new OfertaViagem(rota, periodo, preco);
